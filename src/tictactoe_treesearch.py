@@ -25,38 +25,13 @@ Point = collections.namedtuple('Point', 'value row col')
     
     #print ('Winner:' + str(board.haswinner()))
 
-def generate_valid_boards(board, player, maximizer, depth):
-    winner = board.haswinner()
-    if (winner != None):
-        if winner == maximizer:
-            return 1
-        else:
-            return -1
-
-    if (depth == 0):
-        return 0
-
-    
-    value = None
-    for row in range(board.dimension):
-        for col in range(board.dimension):
-            if (board.grid[row][col] is None):
-                newboard = copy.deepcopy(board)
-                newboard.grid[row][col] = player
-                print(newboard)
-                value = generate_valid_boards(newboard, player.other, maximizer, depth - 1)
-                if (player == maximizer and value == 1):
-                    return value
-                elif (player != maximizer and value == -1):
-                    return value
-    return value
-    #return boardStates
-
-class MoveValue():
-    def __init__(self, move, value, depth):
+class Choice():
+    def __init__(self, move, value):
         self.move = move
         self.value = value
-        self.depth = depth
+
+    def __str__(self):
+        return (str(self.move) + ": " + str(self.value))
 
 class Board():
     def __init__(self, dimension):
@@ -89,8 +64,14 @@ class Board():
         return None
 
     def make_move(self, row, col, player):
-        self.grid[row][col] = player
-        self.moves.append([row,col])
+        if (self.grid[row][col] is None):
+            self.grid[row][col] = player
+            self.moves.append([row,col])
+        else:
+            raise Exception("Attempting to move onto already occupied space")
+
+    def last_move(self):
+        return self.moves[-1]
 
     def print(self):
         print()
@@ -105,135 +86,60 @@ class Board():
         dp.grid = copy.deepcopy(self.grid) 
         dp.moves = copy.deepcopy(self.moves)
         return dp       
-    
-class RandomBot():
+
+class BoringBot():
     def __init__(self, player):
         self.player = player
 
-    def select_move(self, board):
-        candidates = []
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    candidates.append([row,col])
-        return random.choice(candidates)
-
-class OneLayerBot():
-    def __init__(self, player):
-        self.player = player
-
-    def select_move(self, board):
-        candidates = []
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    newboard = copy.deepcopy(board)
-                    newboard.grid[row][col] = self.player
-                    candidates.append([row,col])
-                    if (newboard.haswinner() == self.player):
-                        return [row,col]
-        return random.choice(candidates)
-
-class SmarterOneLayerBot():
-    def __init__(self, player):
-        self.player = player
-
-    def select_move(self, board):
-        candidates = []
-        winning_move = None
-        losing_move = None
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    newboard = copy.deepcopy(board)
-                    newboard.grid[row][col] = self.player
-                    candidates.append([row,col])
-
-                    #check if self wins
-                    if (newboard.haswinner() == self.player):
-                        winning_move = [row,col]
-                    
-                    #check if other wins
-                    newboard.grid[row][col] = self.player.other
-                    if (newboard.haswinner() == self.player.other):
-                        losing_move = [row,col]
-        if (winning_move != None):
-            return winning_move
-        elif (losing_move != None):
-            return losing_move
-        return random.choice(candidates)
-
-class InvincibleBot():
-    def __init__(self, player):
-        self.player = player
-
-    def tree_search(self, board, is_max, depth):
+    def minimax(self, board, is_max, current_player):
         winner = board.haswinner()
         if (winner == self.player):
-            return MoveValue(board.moves[-1], 1, depth)
+            return Choice(board.last_move(), 1)
         elif (winner == self.player.other):
-            return MoveValue(board.moves[-1], -1, depth)
-        elif (winner == None and len(board.moves) == 9):
-            return MoveValue(board.moves[-1], 0, depth)
+            return Choice(board.last_move(), -1)
+        elif (len(board.moves) == 9):
+            return Choice(board.last_move(), 0)
 
-        # tie_move = None
-        # losing_move = None
-        move_values = []
+        candidate_choices = []
         for row in range(board.dimension):
             for col in range(board.dimension):
                 if (board.grid[row][col] is None):
                     newboard = copy.deepcopy(board)
-                    newboard.grid[row][col] = self.player
-                    newboard.moves.append([row,col])
-
-                    move_values.append(self.tree_search(newboard, not is_max, depth + 1))
-                    # if (move_value.value == 1 and is_max):
-                    #     return MoveValue([row,col], move_value.value)
-                    # elif (move_value.value == -1 and not is_max):
-                    #     return MoveValue([row,col], move_value.value)
-                    # elif (move_value.value == 0):
-                    #     tie_move = MoveValue([row,col], 0)
-                    # elif (is_max):
-                    #     losing_move = MoveValue([row,col], -1)
-                    # elif (not is_max):
-                    #     losing_move = MoveValue([row,col], 1)
+                    newboard.make_move(row, col, current_player)
+                    candidate_choices.append(self.minimax(newboard, not is_max, current_player.other))
         
-        #for i in range(len(move_values)):
-
-        
-        return random.choice(move_values)
-
-    def explore_layer(self, board, turn):
-        new_boards = []
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    newboard = copy.deepcopy(board)
-                    newboard.make_move(row, col, turn)
-                    new_boards.append(newboard)
-        return new_boards
-
-    def bfs(self, board):
-        depth = 1
-        current_layer = [board]
-        turn = self.player
-        for i in range(depth):
-            layer_boards = []
-            for i in range(len(current_layer)):
-                layer_boards.extend(self.explore_layer(current_layer[i], turn))
+        max_choice = None
+        min_choice = None
+        tie_choice = None
+        for i in range(len(candidate_choices)):
+            choice = candidate_choices[i]
+            if (choice.value == 1 and max_choice is None):
+                max_choice = choice
             
-            for i in range(len(layer_boards)):
-                layer_board = 
-            current_layer = layer_boards
-        for i in range(len(current_layer)):
-            current_layer[i].print()
-        
-            
+            if (choice.value == 0 and tie_choice is None):
+                tie_choice = choice
+
+            if (choice.value == -1 and min_choice is None):
+                min_choice = choice
+
+        if (is_max):
+            if (max_choice is not None):
+                return max_choice
+            elif (min_choice is not None):
+                return min_choice
+            return tie_choice      
+        else:
+            if (min_choice is not None):
+                return min_choice
+            elif (max_choice is not None):
+                return max_choice
+            return tie_choice
+
+
     def select_move(self, board):
-        #mv = self.tree_search(board, True, 0)
-        self.bfs(board)
-        #return mv.move
-
+        choice = self.minimax(board, True, self.player)
+        print (choice)
+        return choice.move
 
 class Game():
     def __init__(self, num_of_games):
@@ -253,11 +159,12 @@ class Game():
                     choice = xbot.select_move(board)
                 else:
                     choice = obot.select_move(board)
-                board.moves.append(choice)
-                board.grid[choice[0]][choice[1]] = current_turn
+                #board.moves.append(choice)
+                #board.grid[choice[0]][choice[1]] = current_turn
+                board.make_move(choice[0], choice[1], current_turn)
 
                 winner = board.haswinner()
-                print(board)
+                board.print()
                 if (winner != None):
                     print ("Congrats " + str(winner))
                     #print ("You won in " + str(i + 1) + " moves")
@@ -278,21 +185,25 @@ class Game():
         print ("ties: " + str(self.ties))
 
 
-#xbot = RandomBot(Player.x)
-#obot = SmarterOneLayerBot(Player.o)
-#game = Game(10)
-#game.simulate(xbot, obot)
 
+# xbot = RandomBot(Player.x)
+# obot = SmarterOneLayerBot(Player.o)
+# game = Game(10)
+# game.simulate(xbot, obot)
 
+# xbot = RandomBot(Player.x)
+# obot = BoringBot(Player.o)
+# game = Game(1)
+# game.simulate(xbot, obot)
 
-xbot = RandomBot(Player.x)
-obot = InvincibleBot(Player.o)
-board = Board(3)
-board.make_move(0,1, Player.x)
-board.make_move(0,0, Player.o)
-board.make_move(2,1, Player.x)
-obot.select_move(board)
-board.print()
+# xbot = RandomBot(Player.x)
+# obot = InvincibleBot(Player.o)
+# board = Board(3)
+# board.make_move(0,1, Player.x)
+# board.make_move(0,0, Player.o)
+# board.make_move(2,1, Player.x)
+# obot.select_move(board)
+# board.print()
 # board.grid[0][1] = Player.x
 # board.moves.append([0,0])
 # board.grid[1][0] = Player.o
@@ -315,3 +226,46 @@ board.print()
 #    winner = board.haswinner()
 #    print(board)
 #    current_turn = current_turn.other
+
+# x wins
+xbot = BoringBot(Player.x)
+xboard = Board(3)
+xboard.make_move(0,1, Player.x)
+xboard.make_move(0,0, Player.o)
+xboard.make_move(2,1, Player.x)
+xboard.make_move(1,0, Player.o)
+xboard.make_move(1,1, Player.x)
+xboard.print()
+xbot.select_move(xboard)
+
+# o wins
+xbot = BoringBot(Player.x)
+oboard = Board(3)
+oboard.make_move(0,1, Player.x)
+oboard.make_move(0,0, Player.o)
+oboard.make_move(2,1, Player.x)
+oboard.make_move(1,0, Player.o)
+oboard.make_move(1,2, Player.x)
+oboard.make_move(2,0, Player.o)
+oboard.print()
+xbot.select_move(oboard)
+
+# tie
+xbot = BoringBot(Player.x)
+tboard = Board(3)
+tboard.make_move(0,1, Player.x)
+tboard.make_move(0,0, Player.o)
+tboard.make_move(1,0, Player.x)
+tboard.make_move(1,1, Player.o)
+tboard.make_move(2,2, Player.x)
+tboard.make_move(2,0, Player.o)
+tboard.make_move(0,2, Player.x)
+tboard.make_move(1,2, Player.o)
+tboard.make_move(2,1, Player.x)
+tboard.print()
+xbot.select_move(tboard)
+
+# two leve win
+xbot = BoringBot(Player.x)
+tlb = Board(3)
+tlb.make_move(0,0, Player.x)
