@@ -1,6 +1,6 @@
 import pytest
-from .ttt.board import Board
-from .ttt.utils import Player
+from .board import Board
+from .utils import Player
 
 def test_row_win():
     b = Board(3)

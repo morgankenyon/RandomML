@@ -1,7 +1,7 @@
 import random
 import copy
 
-class SmarterOneLayerBot():
+class TwoLayerBot():
     def __init__(self, player):
         self.player = player
 

@@ -25,13 +25,7 @@ Point = collections.namedtuple('Point', 'value row col')
     
     #print ('Winner:' + str(board.haswinner()))
 
-class Choice():
-    def __init__(self, move, value):
-        self.move = move
-        self.value = value
 
-    def __str__(self):
-        return (str(self.move) + ": " + str(self.value))
 
 class Board():
     def __init__(self, dimension):
@@ -87,59 +81,59 @@ class Board():
         dp.moves = copy.deepcopy(self.moves)
         return dp       
 
-class BoringBot():
-    def __init__(self, player):
-        self.player = player
+# class BoringBot():
+#     def __init__(self, player):
+#         self.player = player
 
-    def minimax(self, board, is_max, current_player):
-        winner = board.haswinner()
-        if (winner == self.player):
-            return Choice(board.last_move(), 1)
-        elif (winner == self.player.other):
-            return Choice(board.last_move(), -1)
-        elif (len(board.moves) == 9):
-            return Choice(board.last_move(), 0)
+#     def minimax(self, board, is_max, current_player):
+#         winner = board.haswinner()
+#         if (winner == self.player):
+#             return Choice(board.last_move(), 1)
+#         elif (winner == self.player.other):
+#             return Choice(board.last_move(), -1)
+#         elif (len(board.moves) == 9):
+#             return Choice(board.last_move(), 0)
 
-        candidate_choices = []
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    newboard = copy.deepcopy(board)
-                    newboard.make_move(row, col, current_player)
-                    candidate_choices.append(self.minimax(newboard, not is_max, current_player.other))
+#         candidate_choices = []
+#         for row in range(board.dimension):
+#             for col in range(board.dimension):
+#                 if (board.grid[row][col] is None):
+#                     newboard = copy.deepcopy(board)
+#                     newboard.make_move(row, col, current_player)
+#                     candidate_choices.append(self.minimax(newboard, not is_max, current_player.other))
         
-        max_choice = None
-        min_choice = None
-        tie_choice = None
-        for i in range(len(candidate_choices)):
-            choice = candidate_choices[i]
-            if (choice.value == 1 and max_choice is None):
-                max_choice = choice
+#         max_choice = None
+#         min_choice = None
+#         tie_choice = None
+#         for i in range(len(candidate_choices)):
+#             choice = candidate_choices[i]
+#             if (choice.value == 1 and max_choice is None):
+#                 max_choice = choice
             
-            if (choice.value == 0 and tie_choice is None):
-                tie_choice = choice
+#             if (choice.value == 0 and tie_choice is None):
+#                 tie_choice = choice
 
-            if (choice.value == -1 and min_choice is None):
-                min_choice = choice
+#             if (choice.value == -1 and min_choice is None):
+#                 min_choice = choice
 
-        if (is_max):
-            if (max_choice is not None):
-                return max_choice
-            elif (min_choice is not None):
-                return min_choice
-            return tie_choice      
-        else:
-            if (min_choice is not None):
-                return min_choice
-            elif (max_choice is not None):
-                return max_choice
-            return tie_choice
+#         if (is_max):
+#             if (max_choice is not None):
+#                 return max_choice
+#             elif (min_choice is not None):
+#                 return min_choice
+#             return tie_choice      
+#         else:
+#             if (min_choice is not None):
+#                 return min_choice
+#             elif (max_choice is not None):
+#                 return max_choice
+#             return tie_choice
 
 
-    def select_move(self, board):
-        choice = self.minimax(board, True, self.player)
-        print (choice)
-        return choice.move
+#     def select_move(self, board):
+#         choice = self.minimax(board, True, self.player)
+#         print (choice)
+#         return choice.move
 
 class Game():
     def __init__(self, num_of_games):
