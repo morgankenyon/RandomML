@@ -64,3 +64,36 @@ def test_is_space_occupied():
     b.make_move(0,2, Player.x)
     is_empty = b.is_space_empty(0,2)
     assert is_empty == False
+
+def test_legal_moves_empty_board():
+    b = Board()
+    legal_moves = b.get_legal_moves()
+    assert len(legal_moves) == 9
+
+def test_legal_moves_full_board():
+    b = Board()
+    b.make_move(0,0, Player.x)
+    b.make_move(0,1, Player.o)
+    b.make_move(0,2, Player.x)
+    b.make_move(1,0, Player.o)
+    b.make_move(1,1, Player.x)
+    b.make_move(1,2, Player.o)
+    b.make_move(2,0, Player.x)
+    b.make_move(2,1, Player.o)
+    b.make_move(2,2, Player.x)
+    legal_moves = b.get_legal_moves()
+    assert len(legal_moves) == 0
+
+def test_legal_moves_7_board():
+    b = Board()
+    b.make_move(0,0, Player.x)
+    b.make_move(0,1, Player.o)
+    b.make_move(0,2, Player.x)
+    b.make_move(1,0, Player.o)
+    b.make_move(1,1, Player.x)
+    b.make_move(1,2, Player.o)
+    b.make_move(2,0, Player.x)
+    legal_moves = b.get_legal_moves()
+    assert len(legal_moves) == 2
+    assert legal_moves[0] == [2,1]
+    assert legal_moves[1] == [2,2]

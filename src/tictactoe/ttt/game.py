@@ -19,8 +19,6 @@ class Game():
                     choice = xbot.select_move(board)
                 else:
                     choice = obot.select_move(board)
-                #board.moves.append(choice)
-                #board.grid[choice[0]][choice[1]] = current_turn
                 board.make_move(choice[0], choice[1], current_turn)
 
                 winner = board.haswinner()
@@ -29,7 +27,6 @@ class Game():
                     board.print()
                 if (winner != None):
                     print ("Congrats " + str(winner))
-                    #print ("You won in " + str(i + 1) + " moves")
                     break
                 elif (i == 8):
                     print ("It's a tie!")

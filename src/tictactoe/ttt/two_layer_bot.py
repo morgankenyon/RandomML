@@ -6,26 +6,31 @@ class TwoLayerBot():
         self.player = player
 
     def select_move(self, board):
-        candidates = []
-        winning_move = None
         losing_move = None
-        for row in range(board.dimension):
-            for col in range(board.dimension):
-                if (board.grid[row][col] is None):
-                    newboard = copy.deepcopy(board)
-                    newboard.grid[row][col] = self.player
-                    candidates.append([row,col])
+        first_candidates = board.get_legal_moves()
+        for i in range(len(first_candidates)):
 
-                    #check if self wins
-                    if (newboard.haswinner() == self.player):
-                        winning_move = [row,col]
-                    
-                    #check if other wins
-                    newboard.grid[row][col] = self.player.other
-                    if (newboard.haswinner() == self.player.other):
-                        losing_move = [row,col]
-        if (winning_move != None):
-            return winning_move
-        elif (losing_move != None):
+            # check for winning move
+            row = first_candidates[i][0]
+            col = first_candidates[i][1]
+            newboard = copy.deepcopy(board)
+            newboard.make_move(row, col, self.player)
+            if (newboard.haswinner() == self.player):
+                return [row,col]
+
+            second_candidates = newboard.get_legal_moves()
+            for j in range(len(second_candidates)):
+                # check if opponent can win on their next turn
+                r = second_candidates[j][0]
+                c = second_candidates[j][1]
+                nb = copy.deepcopy(newboard)
+                nb.make_move(r, c, self.player.other)
+                if (nb.haswinner() == self.player.other):
+                    losing_move = [r,c]
+
+        # block opponent from winning
+        if (losing_move != None):
             return losing_move
-        return random.choice(candidates)
+        
+        # otherwise return a random choice
+        return random.choice(first_candidates)

@@ -57,7 +57,7 @@ class Board():
         return None
 
     def make_move(self, row, col, player):
-        if (self.grid[row][col] is None):
+        if (self.is_space_empty(row, col)):
             self.grid[row][col] = player
             self.moves.append([row,col])
         else:
@@ -68,6 +68,14 @@ class Board():
 
     def is_space_empty(self, row, col):
         return self.grid[row][col] is None
+
+    def get_legal_moves(self):
+        choices = []
+        for row in range(self.dimension):
+            for col in range(self.dimension):
+                if (self.is_space_empty(row, col)):
+                    choices.append([row,col])
+        return choices
 
     def print(self):
         print()
