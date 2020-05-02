@@ -1,12 +1,12 @@
 import pytest
 from .board import Board
-from .utils import Player
-from .full_bot import FullBot
+from .player import Player
+from .invincibot import InvinciBot
 
 
 def test_column_win():
     b = Board()
-    xbot = FullBot(Player.x)
+    xbot = InvinciBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(1,0, Player.o)
     b.make_move(0,1, Player.x)
@@ -16,7 +16,7 @@ def test_column_win():
 
 def test_row_win():
     b = Board()
-    xbot = FullBot(Player.x)
+    xbot = InvinciBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(0,2, Player.o)
     b.make_move(1,0, Player.x)
@@ -26,7 +26,7 @@ def test_row_win():
 
 def test_back_diag_win():
     b = Board()
-    xbot = FullBot(Player.x)
+    xbot = InvinciBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(0,2, Player.o)
     b.make_move(1,1, Player.x)
@@ -36,7 +36,7 @@ def test_back_diag_win():
 
 def test_forward_diag_win():
     b = Board()
-    xbot = FullBot(Player.x)
+    xbot = InvinciBot(Player.x)
     b.make_move(2,0, Player.x)
     b.make_move(1,2, Player.o)
     b.make_move(1,1, Player.x)

@@ -1,6 +1,6 @@
 import pytest
 from .board import Board
-from .utils import Player
+from .player import Player
 
 def test_row_win():
     b = Board()
@@ -9,7 +9,7 @@ def test_row_win():
     b.make_move(0,1, Player.x)
     b.make_move(2,2, Player.o)
     b.make_move(0,2, Player.x)
-    assert b.haswinner() == Player.x
+    assert b.has_winner() == Player.x
 
 def test_col_win():
     b = Board()
@@ -18,7 +18,7 @@ def test_col_win():
     b.make_move(1,0, Player.x)
     b.make_move(0,1, Player.o)
     b.make_move(2,0, Player.x)
-    assert b.haswinner() == Player.x
+    assert b.has_winner() == Player.x
 
 def test_back_diagonal_win():
     b = Board()
@@ -27,7 +27,7 @@ def test_back_diagonal_win():
     b.make_move(1,1, Player.x)
     b.make_move(2,0, Player.o)
     b.make_move(2,2, Player.x)
-    assert b.haswinner() == Player.x
+    assert b.has_winner() == Player.x
 
 def test_forward_diagonal_win():
     b = Board()
@@ -36,7 +36,7 @@ def test_forward_diagonal_win():
     b.make_move(1,1, Player.x)
     b.make_move(2,1, Player.o)
     b.make_move(2,0, Player.x)
-    assert b.haswinner() == Player.x
+    assert b.has_winner() == Player.x
 
 def test_last_move():
     b = Board()

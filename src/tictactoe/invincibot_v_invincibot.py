@@ -1,10 +1,10 @@
-from ttt.utils import Player
+from ttt.player import Player
 from ttt.game import Game
-from ttt.full_bot import FullBot
+from ttt.invincibot import InvinciBot
 
 def main():
-    xbot = FullBot(Player.x)
-    obot = FullBot(Player.o)
+    xbot = InvinciBot(Player.x)
+    obot = InvinciBot(Player.o)
     game = Game(1)
     game.simulate(xbot, obot, True)
 

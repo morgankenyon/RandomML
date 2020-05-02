@@ -1,5 +1,11 @@
 import copy
-from .utils import MARKER_TO_CHAR
+from .player import Player
+
+MARKER_TO_CHAR = {
+    None: ' . ',
+    Player.x: ' x ',
+    Player.o: ' o ',
+}
 
 class Board():
     def __init__(self):
@@ -7,7 +13,15 @@ class Board():
         self.grid = [ [ None for y in range (self.dimension) ] for x in range (self.dimension ) ]
         self.moves = []
 
-    def haswinner(self):        
+    def print(self):
+        print()
+        for row in range(self.dimension):
+            line = []
+            for col in range(self.dimension):            
+                line.append(MARKER_TO_CHAR[self.grid[row][col]])
+            print('%s' % (''.join(line)))
+
+    def has_winner(self):        
         # need at least 5 moves before x hits three in a row
         if (len(self.moves) < 5):
             return None
@@ -42,7 +56,7 @@ class Board():
             if (value != None):
                 return value
 
-        # check forwards diagonal (top right to bottom left) for win
+        # check forwards diagonal (bottom left to top right) for win
         forwards_diag = set()
         forwards_diag.add(self.grid[2][0])
         forwards_diag.add(self.grid[1][1])
@@ -76,14 +90,6 @@ class Board():
                 if (self.is_space_empty(row, col)):
                     choices.append([row,col])
         return choices
-
-    def print(self):
-        print()
-        for row in range(self.dimension):
-            line = []
-            for col in range(self.dimension):            
-                line.append(MARKER_TO_CHAR[self.grid[row][col]])
-            print('%s' % (''.join(line)))
                 
     def __deepcopy__(self, memodict={}):
         dp = Board()

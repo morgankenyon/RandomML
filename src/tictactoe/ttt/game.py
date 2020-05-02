@@ -1,5 +1,5 @@
 from .board import Board
-from .utils import Player
+from .player import Player
 
 class Game():
     def __init__(self, num_of_games):
@@ -21,15 +21,15 @@ class Game():
                     choice = obot.select_move(board)
                 board.make_move(choice[0], choice[1], current_turn)
 
-                winner = board.haswinner()
+                winner = board.has_winner()
 
                 if print_game:
                     board.print()
                 if (winner != None):
-                    print ("Congrats " + str(winner))
+                    #print ("Congrats " + str(winner))
                     break
                 elif (i == 8):
-                    print ("It's a tie!")
+                    #print ("It's a tie!")
                     break
                 current_turn = current_turn.other
             if (winner == Player.x):

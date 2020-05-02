@@ -15,7 +15,7 @@ class TwoLayerBot():
             col = first_candidates[i][1]
             newboard = copy.deepcopy(board)
             newboard.make_move(row, col, self.player)
-            if (newboard.haswinner() == self.player):
+            if (newboard.has_winner() == self.player):
                 return [row,col]
 
             second_candidates = newboard.get_legal_moves()
@@ -25,10 +25,10 @@ class TwoLayerBot():
                 c = second_candidates[j][1]
                 nb = copy.deepcopy(newboard)
                 nb.make_move(r, c, self.player.other)
-                if (nb.haswinner() == self.player.other):
+                if (nb.has_winner() == self.player.other):
                     losing_move = [r,c]
 
-        # block opponent from winning
+        # if opponent has a winning move, block it
         if (losing_move != None):
             return losing_move
         

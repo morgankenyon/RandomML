@@ -1,12 +1,13 @@
 from ttt.player import Player
 from ttt.game import Game
 from ttt.random_bot import RandomBot
+from ttt.invincibot import InvinciBot
 
 def main():
-    xbot = RandomBot(Player.x)
+    xbot = InvinciBot(Player.x)
     obot = RandomBot(Player.o)
-    game = Game(1000)
-    game.simulate(xbot, obot)
+    game = Game(1)
+    game.simulate(xbot, obot, False)
 
 if __name__ == '__main__':
     main()
