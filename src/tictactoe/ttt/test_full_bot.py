@@ -5,7 +5,7 @@ from .full_bot import FullBot
 
 
 def test_column_win():
-    b = Board(3)
+    b = Board()
     xbot = FullBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(1,0, Player.o)
@@ -15,7 +15,7 @@ def test_column_win():
     assert move == [0,2]
 
 def test_row_win():
-    b = Board(3)
+    b = Board()
     xbot = FullBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(0,2, Player.o)
@@ -25,7 +25,7 @@ def test_row_win():
     assert move == [2,0]
 
 def test_back_diag_win():
-    b = Board(3)
+    b = Board()
     xbot = FullBot(Player.x)
     b.make_move(0,0, Player.x)
     b.make_move(0,2, Player.o)
@@ -35,7 +35,7 @@ def test_back_diag_win():
     assert move == [2,2]
 
 def test_forward_diag_win():
-    b = Board(3)
+    b = Board()
     xbot = FullBot(Player.x)
     b.make_move(2,0, Player.x)
     b.make_move(1,2, Player.o)

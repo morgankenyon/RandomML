@@ -2,46 +2,58 @@ import copy
 from .utils import MARKER_TO_CHAR
 
 class Board():
-    def __init__(self, dimension):
-        self.dimension = dimension
-        self.grid = [ [ None for y in range (dimension) ] for x in range (dimension ) ]
+    def __init__(self):
+        self.dimension = 3
+        self.grid = [ [ None for y in range (self.dimension) ] for x in range (self.dimension ) ]
         self.moves = []
 
-    def haswinner(self):
-        backwards_diag = set()
-        forwards_diag = set()
-        for i in range(self.dimension):
-            uniquerows = list(dict.fromkeys(self.grid[i]))
-            if (len(uniquerows) == 1 and uniquerows[0] != None):
-                return uniquerows[0]
-
-            uniquecolumns = set()
-            for j in range(self.dimension):
-                uniquecolumns.add(self.grid[j][i])
-                if (i == j):
-                    backwards_diag.add(self.grid[j][i])
-
-                if (i == 1 and j == 1):
-                    forwards_diag.add(self.grid[j][i])
-                elif (i == 2 and j == 0):
-                    forwards_diag.add(self.grid[j][i])
-                elif (i == 0 and j == 2):
-                    forwards_diag.add(self.grid[j][i])
-            if (len(uniquecolumns) == 1):
-                value = uniquecolumns.pop()
+    def haswinner(self):        
+        # need at least 5 moves before x hits three in a row
+        if (len(self.moves) < 5):
+            return None
+        
+        # check rows for win
+        for row in range(self.dimension):
+            unique_rows = set(self.grid[row])
+            if (len(unique_rows) == 1):
+                value = unique_rows.pop()
                 if (value != None):
                     return value
+                    
+        # check columns for win
+        for col in range(self.dimension):
+            unique_cols = set()
+            for row in range(self.dimension):
+                unique_cols.add(self.grid[row][col])
+
+            if (len(unique_cols) == 1):
+                value = unique_cols.pop()
+                if (value != None):
+                    return value
+
+        # check backwards diagonal (top left to bottom right) for win
+        backwards_diag = set()
+        backwards_diag.add(self.grid[0][0])
+        backwards_diag.add(self.grid[1][1])
+        backwards_diag.add(self.grid[2][2])
 
         if (len(backwards_diag) == 1):
             value = backwards_diag.pop()
             if (value != None):
                 return value
-        elif (len(forwards_diag) == 1):            
+
+        # check forwards diagonal (top right to bottom left) for win
+        forwards_diag = set()
+        forwards_diag.add(self.grid[2][0])
+        forwards_diag.add(self.grid[1][1])
+        forwards_diag.add(self.grid[0][2])
+
+        if (len(forwards_diag) == 1):
             value = forwards_diag.pop()
             if (value != None):
                 return value
-
         
+        # found no winner, return None
         return None
 
     def make_move(self, row, col, player):
@@ -66,7 +78,7 @@ class Board():
             print('%s' % (''.join(line)))
                 
     def __deepcopy__(self, memodict={}):
-        dp = Board(self.dimension)
+        dp = Board()
         dp.grid = copy.deepcopy(self.grid) 
         dp.moves = copy.deepcopy(self.moves)
         return dp  

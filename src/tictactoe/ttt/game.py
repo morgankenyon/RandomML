@@ -10,7 +10,7 @@ class Game():
     
     def simulate(self, xbot, obot, print_game = False):
         for _ in range(self.num_of_games):
-            board = Board(3)
+            board = Board()
             current_turn = Player.x
             winner = None
             for i in range(9):

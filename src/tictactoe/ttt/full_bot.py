@@ -12,6 +12,7 @@ class Choice():
 class FullBot():
     def __init__(self, player):
         self.player = player
+        self.num_moves_explored = 0
 
     def minimax(self, board, is_max, current_player, depth):
         winner = board.haswinner()
@@ -21,6 +22,7 @@ class FullBot():
             return Choice(board.last_move(), -10 + depth, depth)
         elif (len(board.moves) == 9):
             return Choice(board.last_move(), 0, depth)
+        self.num_moves_explored = self.num_moves_explored + 1
 
         candidate_choices = []
         for row in range(board.dimension):
@@ -44,29 +46,15 @@ class FullBot():
             elif (not is_max and choice.value < min_value):
                 min_choice = choice
                 min_value = choice.value
-            # if (choice.value == 0 and tie_choice is None):
-            #     tie_choice = choice
-
-            # if (choice.value == -1 and min_choice is None):
-            #     min_choice = choice
 
         if (is_max):
             return max_choice
-            # if (max_choice is not None):
-            #     return Choice(board.last_move(), max_choice.value, max_choice.depth)
-            # elif (min_choice is not None):
-            #     return Choice(board.last_move(), min_choice.value, min_choice.depth)
-            # return Choice(board.last_move(), tie_choice.value, tie_choice.depth)    
         else:
-            return min_choice
-            # if (min_choice is not None):
-            #     return Choice(board.last_move(), min_choice.value, min_choice.depth)
-            # elif (max_choice is not None):
-            #     return Choice(board.last_move(), max_choice.value, max_choice.depth)
-            # return Choice(board.last_move(), tie_choice.value, tie_choice.depth) 
+            return min_choice 
 
 
     def select_move(self, board):
         choice = self.minimax(board, True, self.player, 0)
-        print (choice.value)
+        print (str(self.num_moves_explored) + " moves explored to find " + str(choice.value))
+        self.num_moves_explored = 0
         return choice.move
