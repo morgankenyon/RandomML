@@ -24,9 +24,9 @@ class InvinciBot():
         elif (len(board.moves) == 9):
             return Choice(board.last_move(), 0, depth)
 
-        # otherwise, call minimax on each possible board combination
-        candidate_choices = []
         candidates = board.get_legal_moves()
+        max_choice = None
+        min_choice = None
         for i in range(len(candidates)):
             row = candidates[i][0]
             col = candidates[i][1]
@@ -34,22 +34,16 @@ class InvinciBot():
             newboard.make_move(row, col, current_player)
             result = self.minimax(newboard, not is_max, current_player.other, depth + 1)
             result.move = newboard.last_move()
-            candidate_choices.append(result)
+
+            if (is_max and (max_choice is None or result.value > max_choice.value)):
+                max_choice = result
+            elif (not is_max and (min_choice is None or result.value < min_choice.value)):
+                min_choice = result
         
-        max_choice = None
-        max_value = -100
-        min_choice = None
-        min_value = 100
-        # determine which board combinations result in 
-        # best move for particular agent
-        for i in range(len(candidate_choices)):
-            choice = candidate_choices[i]
-            if (is_max and choice.value > max_value):
-                max_choice = choice
-                max_value = choice.value
-            elif (not is_max and choice.value < min_value):
-                min_choice = choice
-                min_value = choice.value
+        # # determine which board combinations result in 
+        # # best move for particular agent
+        # for i in range(len(candidate_choices)):
+        #     choice = candidate_choices[i]
 
         # pick whichever move is the best for the 
         # particular agent

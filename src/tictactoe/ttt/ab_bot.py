@@ -12,7 +12,6 @@ class Choice():
 class AbBot():
     def __init__(self, player):
         self.player = player
-        self.num_of_boards_explored = 0
     
     def alpha_beta_search(self, board, is_max, current_player, depth, alpha, beta):
         # if board has a winner or is a tie
@@ -25,17 +24,12 @@ class AbBot():
         elif (len(board.moves) == 9):
             return Choice(board.last_move(), 0, depth)
 
-        candidates = board.get_legal_moves()
-        self.num_of_boards_explored = self.num_of_boards_explored + 1
-        
+        candidates = board.get_legal_moves()        
         max_choice = None
-        max_value = -100
         min_choice = None
-        min_value = 100
         for i in range(len(candidates)):
             row = candidates[i][0]
             col = candidates[i][1]
-
             newboard = copy.deepcopy(board)
             newboard.make_move(row, col, current_player)
             result = self.alpha_beta_search(newboard, not is_max, current_player.other, depth +1, alpha, beta)
@@ -43,22 +37,18 @@ class AbBot():
 
             if (is_max):
                 alpha = max(result.value, alpha)
-
                 if (alpha >= beta):
                     return result
 
-                if (result.value > max_value):
+                if (max_choice is None or result.value > max_choice.value):
                     max_choice = result
-                    max_value = result.value
             else:
                 beta = min(result.value, beta)
-
                 if (alpha >= beta):
                     return result
                 
-                if (result.value < min_value):
+                if (min_choice is None or result.value < min_choice.value):
                     min_choice = result
-                    min_value = result.value
 
         if (is_max):
             return max_choice
@@ -66,7 +56,5 @@ class AbBot():
             return min_choice
 
     def select_move(self, board):
-        self.num_of_boards_explored = 0
         choice = self.alpha_beta_search(board, True, self.player, 0, -100, 100)
-        print ("Num of Boards Explored: " + str(self.num_of_boards_explored))
         return choice.move
