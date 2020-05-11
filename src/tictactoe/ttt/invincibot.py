@@ -39,11 +39,6 @@ class InvinciBot():
                 max_choice = result
             elif (not is_max and (min_choice is None or result.value < min_choice.value)):
                 min_choice = result
-        
-        # # determine which board combinations result in 
-        # # best move for particular agent
-        # for i in range(len(candidate_choices)):
-        #     choice = candidate_choices[i]
 
         # pick whichever move is the best for the 
         # particular agent
