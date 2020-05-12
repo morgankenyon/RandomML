@@ -1,14 +1,6 @@
-# RandomML
+## Tic Tac Toe
 
-A repository to hold my experiments in ML.
-
-## Game Playing Bots
-
-One of the things I'm currently interested in is game playing bots. At the present moment my bots are all implemented using traditional AI approaches. Though in the future my plan is to using modern deep learning and reinforcement learning approaches as well.
-
-### Tic Tac Toe
-
-All tic tac toe related code and bots is located in the `src/tictactoe` folder. There are currently five bots, ranked from worst to best:
+This folder holds all code related to my tic-tac-toe programming. 
 
 * random_bot.py - makes random moves
 * one_layer_bot.py - searches one move into the future, will always pick a winning move if one is available, otherwise plays randomly.
